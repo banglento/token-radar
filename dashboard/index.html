@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar — pre-token protocols ranked by implied launch value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">Token launch radar &middot; sealed DefiLlama snapshot</p>
+    <h1>Which protocol launches next — and what would its token be worth?</h1>
+    <p class="lede">Every protocol below records no token yet. Each is priced the way the
+    market prices the ones that already trade: its TVL times its category&rsquo;s
+    median market-cap-to-TVL ratio, adjusted for 7-day growth and for how long
+    it has run with no token. Click any row for the model&rsquo;s maths and the
+    six steps to farm it.</p>
+    <dl class="stats" id="stats"></dl>
+  </div>
+</header>
+<main class="wrap">
+  <nav class="tabs" aria-label="Views">
+    <button id="tab-board" class="tab active" type="button">Pre-token board</button>
+    <button id="tab-live" class="tab" type="button">Already trading</button>
+  </nav>
+
+  <section id="view-board" aria-label="Pre-token board">
+    <form class="controls" id="controls">
+      <label>Search <input id="q" type="search" placeholder="name or slug" autocomplete="off"></label>
+      <label>Category <select id="cat"><option value="all">All categories</option></select></label>
+      <label>Chain <select id="chain"><option value="all">All chains</option></select></label>
+      <label>Sort <select id="sort">
+        <option value="implied">Implied value</option>
+        <option value="tvl">TVL</option>
+        <option value="growth">7-day growth</option>
+        <option value="age">Age</option>
+      </select></label>
+      <label class="check"><input id="wl" type="checkbox"> Watchlist only</label>
+    </form>
+    <p class="count" id="count"></p>
+    <div class="table-wrap">
+      <table id="board">
+        <thead><tr>
+          <th>#</th><th>Protocol</th><th>Category</th><th>Chains</th>
+          <th class="num">TVL</th><th class="num">7d</th><th class="num">Age</th>
+          <th class="num">Implied launch value</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="note">Implied value is this radar&rsquo;s own claim from the snapshot&rsquo;s
+    figures — it is not a prediction that a token will be issued, or when.
+    &ldquo;Records no token&rdquo; means the snapshot&rsquo;s record shows none; a
+    protocol on the board may still have a token its record does not carry.</p>
+  </section>
+
+  <section id="view-live" aria-label="Already trading" hidden>
+    <p class="lede">These protocols already have a token that trades, so the market —
+    not a model — sets their value. They are shown apart from the ranked
+    board, as the comparables the board&rsquo;s multiples are taken from.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Protocol</th><th>Category</th><th>Chains</th>
+          <th class="num">TVL</th><th class="num">Market cap</th><th class="num">Mcap / TVL</th><th class="num">7d</th>
+        </tr></thead>
+        <tbody id="live-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="detail" aria-label="Protocol detail" hidden></section>
+
+  <section class="model" aria-label="How the radar prices a launch">
+    <h2>How the radar prices a launch</h2>
+    <p>For each category, take the median market-cap-to-TVL ratio of the
+    live-token protocols in that category (three or more of them; otherwise the
+    whole snapshot&rsquo;s median of <span id="overall"></span>). Then:</p>
+    <p class="formula">implied value = TVL &times; category multiple &times; growth factor &times; maturity factor</p>
+    <ul>
+      <li><strong>Growth factor</strong> = 1 + clamp(7-day TVL change, &minus;50%, +100%) &divide; 100 &times; 0.4</li>
+      <li><strong>Maturity factor</strong> = 0.70 + min(age in days, 1460) &divide; 1460 &times; 0.30 (age unknown: 365 days)</li>
+      <li><strong>Watchlist</strong> = the snapshot&rsquo;s own 40-protocol floor (TVL &ge; $50M,
+      no token recorded, not a wrapped, staked or bridged product). The board
+      adds every other rankable pre-token protocol below that floor — the early
+      radar the watchlist alone would miss.</li>
+    </ul>
+    <p class="src" id="src"></p>
+  </section>
+</main>
+<footer class="wrap"><p>Token Radar &middot; built from a sealed snapshot, rendered with no network.
+All figures are the snapshot&rsquo;s own; farm plans are the radar&rsquo;s own derivation.</p></footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
